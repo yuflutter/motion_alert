@@ -30,37 +30,64 @@ class _HomePage extends State<HomePage> {
         child: SimpleFutureBuilder<void>(
             future: _initFuture,
             builder: (context, _) {
-              final camera = context.watch<MotionCamera>();
+              context.watch<MotionCamera>();
               final notifier = context.watch<MotionNotifier>();
               return Column(
                 children: [
-                  _input(
-                    controller: AppSettings.instance.pixelChangeThresholdCtrl,
-                    label: 'Pixel change threshold',
-                    onSubmitted: (_) => AppSettings.instance.setPixelChangeThreshold(),
-                  ),
-                  _input(
-                    controller: AppSettings.instance.changedPixelsPercentCtrl,
-                    label: 'Changed pixels percent',
-                    onSubmitted: (_) => AppSettings.instance.setChangedPixelsPercent(),
-                  ),
-                  _input(
-                    controller: AppSettings.instance.framesPerSecondCtrl,
-                    label: 'Frames per second',
-                    onSubmitted: (_) => AppSettings.instance.setFramesPerSecond(),
-                  ),
-                  _input(
-                    controller: AppSettings.instance.passwordCtrl,
-                    label: 'Password',
-                    keyboardType: TextInputType.visiblePassword,
-                    obscureText: true,
-                    onSubmitted: (_) => AppSettings.instance.setPassword(),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _input(
+                          controller: AppSettings.instance.pixelChangeThresholdCtrl,
+                          label: 'Pixel change threshold',
+                          onSubmitted: (_) => AppSettings.instance.setPixelChangeThreshold(),
+                        ),
+                        _input(
+                          controller: AppSettings.instance.changedPixelsPercentCtrl,
+                          label: 'Changed pixels percent',
+                          onSubmitted: (_) => AppSettings.instance.setChangedPixelsPercent(),
+                        ),
+                        _input(
+                          controller: AppSettings.instance.framesPerSecondCtrl,
+                          label: 'Frames per second',
+                          onSubmitted: (_) => AppSettings.instance.setFramesPerSecond(),
+                        ),
+                        _input(
+                          controller: AppSettings.instance.passwordCtrl,
+                          label: 'Password',
+                          keyboardType: TextInputType.visiblePassword,
+                          obscureText: true,
+                          onSubmitted: (_) => AppSettings.instance.setPassword(),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(child: Text('Camera resolution:')),
+                            Expanded(
+                              child: DropdownButtonFormField<ResolutionPreset>(
+                                value: AppSettings.instance.cameraResolutionPreset,
+                                items: ResolutionPreset.values
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(e.toString().split('.').last),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (v) => AppSettings.instance.setCameraResolutionPreset(v),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   Expanded(
-                    child: CameraPreview(camera.cameraController),
+                    child: CameraPreview(MotionCamera.instance.cameraController),
                   ),
                   SizedBox(height: 15),
-                  (camera.motionDetected)
+                  (MotionCamera.instance.motionDetected)
                       ? Text(
                           'MOTION DETECTED',
                           style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
@@ -91,23 +118,18 @@ class _HomePage extends State<HomePage> {
     TextInputType keyboardType = TextInputType.number,
     bool obscureText = false,
   }) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text('$label:'),
+    return Row(
+      children: [
+        Expanded(child: Text('$label:')),
+        Expanded(
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            obscureText: obscureText,
+            onSubmitted: onSubmitted,
           ),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              keyboardType: keyboardType,
-              obscureText: obscureText,
-              onSubmitted: onSubmitted,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
