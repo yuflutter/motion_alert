@@ -48,7 +48,7 @@ class AppSettings with ChangeNotifier {
       framesPerSecondCtrl.text = _framesPerSecond.toString();
       _framePerSecondToDuration();
 
-      _password = _prefs.getString('_password') ?? 'loyhylejdvhxgehe';
+      _password = _prefs.getString('_password') ?? 'loyhylejdvhxghhe';
       passwordCtrl.text = _password.toString();
 
       _save();
