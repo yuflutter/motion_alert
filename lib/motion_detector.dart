@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+
 import 'package:motion_alert/app_settings.dart';
 
 class MotionDetector {

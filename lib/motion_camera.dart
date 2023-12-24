@@ -10,13 +10,15 @@ import 'package:motion_alert/motion_notifier.dart';
 class MotionCamera with ChangeNotifier {
   late CameraController cameraController;
 
+  bool _motionDetection = true;
+  bool _motionDetected = false;
   DateTime _previousFrameTime = DateTime.now();
   CameraImage? _previousFrame;
-  bool _motionDetected = false;
 
   static final instance = MotionCamera._();
   MotionCamera._();
 
+  bool get motionDetection => _motionDetection;
   bool get motionDetected => _motionDetected;
 
   Future<void> init() async {
@@ -33,6 +35,16 @@ class MotionCamera with ChangeNotifier {
     AppSettings.instance.addListener(_onChangeSettings);
   }
 
+  void startDetectMotion() {
+    _motionDetection = true;
+    notifyListeners();
+  }
+
+  void stopDetectMotion() {
+    _motionDetection = false;
+    notifyListeners();
+  }
+
   void _onChangeSettings() async {
     AppSettings.instance.removeListener(_onChangeSettings);
     await cameraController.stopImageStream();
@@ -46,7 +58,7 @@ class MotionCamera with ChangeNotifier {
       final now = DateTime.now();
       if (now.difference(_previousFrameTime) > AppSettings.instance.frameDuration) {
         _previousFrameTime = now;
-        if (_previousFrame != null && _previousFrame?.width == frame.width) {
+        if (_motionDetection && _previousFrame != null && _previousFrame?.width == frame.width) {
           final detected = MotionDetector.detect(_previousFrame!, frame);
           if (detected != _motionDetected) {
             FlutterBeep.beep();

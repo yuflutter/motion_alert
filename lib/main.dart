@@ -22,8 +22,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Motion Alert',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          visualDensity: VisualDensity.compact,
         ),
         home: const HomePage(),
       ),

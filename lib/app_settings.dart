@@ -21,6 +21,13 @@ class AppSettings with ChangeNotifier {
   final framesPerSecondCtrl = TextEditingController();
   late Duration _frameDuration;
 
+  late String _camName;
+  final camNameCtrl = TextEditingController();
+
+  final senderEmail = 'yuflutter@yandex.ru';
+  final senderName = 'motion_alert';
+  String get user => senderEmail.split('@').first;
+
   late String _password;
   final passwordCtrl = TextEditingController();
 
@@ -48,6 +55,9 @@ class AppSettings with ChangeNotifier {
       framesPerSecondCtrl.text = _framesPerSecond.toString();
       _framePerSecondToDuration();
 
+      _camName = _prefs.getString('_camName') ?? 'cam-1';
+      camNameCtrl.text = _camName.toString();
+
       _password = _prefs.getString('_password') ?? 'loyhylejdvhxghhe';
       passwordCtrl.text = _password.toString();
 
@@ -64,6 +74,7 @@ class AppSettings with ChangeNotifier {
         _prefs.setInt('_pixelChangeThreshold', _pixelChangeThreshold),
         _prefs.setDouble('_changedPixelsPercent', _changedPixelsPercent),
         _prefs.setDouble('_framesPerSecond', _framesPerSecond),
+        _prefs.setString('_camName', _camName),
         _prefs.setString('_password', _password),
       ]);
     } catch (e, s) {
@@ -97,6 +108,13 @@ class AppSettings with ChangeNotifier {
   void setFramesPerSecond() {
     _framesPerSecond = double.parse(framesPerSecondCtrl.text);
     _framePerSecondToDuration();
+    _save();
+    notifyListeners();
+  }
+
+  String get camName => _camName;
+  void setCamName() {
+    _camName = camNameCtrl.text;
     _save();
     notifyListeners();
   }

@@ -35,81 +35,97 @@ class _HomePage extends State<HomePage> {
             context.watch<MotionCamera>();
             final notifier = context.watch<MotionNotifier>();
             return (_isScreenVisible)
-                ? SafeArea(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _input(
-                                controller: AppSettings.instance.pixelChangeThresholdCtrl,
-                                label: 'Pixel change threshold',
-                                onSubmitted: (_) => AppSettings.instance.setPixelChangeThreshold(),
-                              ),
-                              _input(
-                                controller: AppSettings.instance.changedPixelsPercentCtrl,
-                                label: 'Changed pixels percent',
-                                onSubmitted: (_) => AppSettings.instance.setChangedPixelsPercent(),
-                              ),
-                              _input(
-                                controller: AppSettings.instance.framesPerSecondCtrl,
-                                label: 'Frames per second',
-                                onSubmitted: (_) => AppSettings.instance.setFramesPerSecond(),
-                              ),
-                              _input(
-                                controller: AppSettings.instance.passwordCtrl,
-                                label: 'Password',
-                                keyboardType: TextInputType.visiblePassword,
-                                obscureText: true,
-                                onSubmitted: (_) => AppSettings.instance.setPassword(),
-                              ),
-                              Row(
+                ? Column(
+                    children: [
+                      Expanded(
+                        child: Stack(
+                          alignment: AlignmentDirectional.bottomCenter,
+                          children: [
+                            CameraPreview(MotionCamera.instance.cameraController),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 15),
+                              child: (MotionCamera.instance.motionDetected)
+                                  ? Text('MOTION DETECTED', style: _imageTextStyleAlert)
+                                  : (MotionCamera.instance.motionDetection)
+                                      ? Text('DETECTING...', style: _imageTextStyle)
+                                      : Text('PAUSED', style: _imageTextStyle),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                              child: Row(
                                 children: [
-                                  Expanded(child: Text('Camera resolution:')),
                                   Expanded(
-                                    child: DropdownButtonFormField<ResolutionPreset>(
-                                      value: AppSettings.instance.cameraResolutionPreset,
-                                      items: ResolutionPreset.values
-                                          .map(
-                                            (e) => DropdownMenuItem(
-                                              value: e,
-                                              child: Text(e.toString().split('.').last),
-                                            ),
-                                          )
-                                          .toList(),
-                                      onChanged: (v) => AppSettings.instance.setCameraResolutionPreset(v),
+                                    child: Text(
+                                      notifier.lastLog,
+                                      style: _imageTextStyle,
                                     ),
+                                  ),
+                                  Text(
+                                    '${notifier.framesCount} / ${notifier.attachmentsCount}',
+                                    style: _imageTextStyle,
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          child: CameraPreview(MotionCamera.instance.cameraController),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(child: Text('Camera resolution:')),
+                                Expanded(
+                                  child: DropdownButtonFormField<ResolutionPreset>(
+                                    value: AppSettings.instance.cameraResolutionPreset,
+                                    items: ResolutionPreset.values
+                                        .map(
+                                          (e) => DropdownMenuItem(
+                                            value: e,
+                                            child: Text(e.toString().split('.').last),
+                                          ),
+                                        )
+                                        .toList(),
+                                    onChanged: (v) => AppSettings.instance.setCameraResolutionPreset(v),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            _input(
+                              controller: AppSettings.instance.camNameCtrl,
+                              label: 'Cam name',
+                              keyboardType: TextInputType.text,
+                              onSubmitted: (_) => AppSettings.instance.setCamName(),
+                            ),
+                            _input(
+                              controller: AppSettings.instance.pixelChangeThresholdCtrl,
+                              label: 'Pixel change threshold',
+                              onSubmitted: (_) => AppSettings.instance.setPixelChangeThreshold(),
+                            ),
+                            _input(
+                              controller: AppSettings.instance.changedPixelsPercentCtrl,
+                              label: 'Changed pixels percent',
+                              onSubmitted: (_) => AppSettings.instance.setChangedPixelsPercent(),
+                            ),
+                            _input(
+                              controller: AppSettings.instance.framesPerSecondCtrl,
+                              label: 'Frames per second',
+                              onSubmitted: (_) => AppSettings.instance.setFramesPerSecond(),
+                            ),
+                            _input(
+                              controller: AppSettings.instance.passwordCtrl,
+                              label: 'Password',
+                              keyboardType: TextInputType.visiblePassword,
+                              obscureText: true,
+                              onSubmitted: (_) => AppSettings.instance.setPassword(),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 15),
-                        (MotionCamera.instance.motionDetected)
-                            ? Text(
-                                'MOTION DETECTED',
-                                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                              )
-                            : Text('DETECTING...'),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 15, 5),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(notifier.lastLog),
-                              ),
-                              Text('${notifier.framesCount} / ${notifier.attachmentsCount}'),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   )
                 : InkWell(
                     onTap: _showScreen,
@@ -150,6 +166,9 @@ class _HomePage extends State<HomePage> {
       () => setState(() => _isScreenVisible = false),
     );
   }
+
+  final _imageTextStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
+  final _imageTextStyleAlert = TextStyle(color: Colors.yellow, fontWeight: FontWeight.bold);
 
   @override
   dispose() {
