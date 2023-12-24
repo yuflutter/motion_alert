@@ -9,6 +9,8 @@ import 'package:motion_alert/motion_notifier.dart';
 import 'package:motion_alert/app_settings.dart';
 import 'package:motion_alert/core/simple_future_builder.dart';
 
+final _clerScreenDuration = Duration(seconds: 120);
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   @override
@@ -43,7 +45,7 @@ class _HomePage extends State<HomePage> {
                           children: [
                             CameraPreview(MotionCamera.instance.cameraController),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 15),
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 19),
                               child: (MotionCamera.instance.motionDetected)
                                   ? Text('MOTION DETECTED', style: _imageTextStyleAlert)
                                   : (MotionCamera.instance.motionDetection)
@@ -51,7 +53,7 @@ class _HomePage extends State<HomePage> {
                                       : Text('PAUSED', style: _imageTextStyle),
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                              padding: EdgeInsets.fromLTRB(10, 0, 10, 3),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -162,13 +164,13 @@ class _HomePage extends State<HomePage> {
   void _showScreen() {
     setState(() => _isScreenVisible = true);
     Future.delayed(
-      Duration(seconds: 60),
+      _clerScreenDuration,
       () => setState(() => _isScreenVisible = false),
     );
   }
 
-  final _imageTextStyle = TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
-  final _imageTextStyleAlert = TextStyle(color: Colors.yellow, fontWeight: FontWeight.bold);
+  final _imageTextStyle = TextStyle(color: Colors.red, fontWeight: FontWeight.bold);
+  final _imageTextStyleAlert = TextStyle(color: Colors.red, fontWeight: FontWeight.bold);
 
   @override
   dispose() {
