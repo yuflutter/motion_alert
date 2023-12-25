@@ -71,7 +71,7 @@ class MotionNotifier with ChangeNotifier {
       return;
     }
     _executing = true;
-    _log('start compressing frames');
+    _log('compressing frames...');
     try {
       while (_framesBuffer.isNotEmpty && _attachmentsBuffer.length < _maxAttachmentCount) {
         final frame = _framesBuffer.removeAt(0);
@@ -96,7 +96,7 @@ class MotionNotifier with ChangeNotifier {
       // }
       _log('$attachmentsCount frames sent');
     } catch (e, s) {
-      _log('', e, s);
+      _log('Error sending frames', e, s);
     }
     _executing = false;
     _attachmentsBuffer.clear();
@@ -111,8 +111,8 @@ class MotionNotifier with ChangeNotifier {
       dev.log(msg);
       _lastLog = msg;
     } else {
-      dev.log('$MotionNotifier ERROR: $msg', error: error, stackTrace: stack);
-      _lastLog = msg + error.toString();
+      dev.log('$msg: ', error: error, stackTrace: stack);
+      _lastLog = '$msg: $error';
     }
     notifyListeners();
   }

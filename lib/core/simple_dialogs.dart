@@ -42,8 +42,15 @@ class ErrorScreen extends StatelessWidget {
   final String userMsg;
   final Object error;
   final StackTrace? stack;
+  final bool isExpanded;
 
-  const ErrorScreen({required this.userMsg, required this.error, this.stack, super.key});
+  const ErrorScreen({
+    required this.userMsg,
+    required this.error,
+    this.stack,
+    this.isExpanded = false,
+    super.key,
+  });
 
   @override
   build(context) {
@@ -53,7 +60,12 @@ class ErrorScreen extends StatelessWidget {
           child: Container(
             color: Colors.black87,
             padding: EdgeInsets.all(8),
-            child: _CommonErrorDialog(userMsg: userMsg, error: error, stack: stack),
+            child: _CommonErrorDialog(
+              userMsg: userMsg,
+              error: error,
+              stack: stack,
+              isExpanded: isExpanded,
+            ),
           ),
         ),
       ),
@@ -66,14 +78,14 @@ class _CommonErrorDialog extends StatefulWidget {
   final Object? error;
   final StackTrace? stack;
   final bool isSnackbar;
-  final bool isSnackbarExpanded;
+  final bool isExpanded;
 
   const _CommonErrorDialog({
     required this.userMsg,
     this.error,
     this.stack,
     this.isSnackbar = false,
-    this.isSnackbarExpanded = false,
+    this.isExpanded = false,
   });
 
   @override
@@ -86,7 +98,7 @@ class __CommonErrorDialog extends State<_CommonErrorDialog> {
 
   @override
   initState() {
-    _expanded = widget.isSnackbar && widget.isSnackbarExpanded;
+    _expanded = widget.isExpanded;
     _text = '${widget.userMsg}\n${widget.error}\n${widget.stack}';
     super.initState();
   }
@@ -110,7 +122,7 @@ class __CommonErrorDialog extends State<_CommonErrorDialog> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    'Подробнее...',
+                    'Details...',
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
                   ),
                 ],
@@ -127,7 +139,7 @@ class __CommonErrorDialog extends State<_CommonErrorDialog> {
                     OutlinedButton(
                       onPressed: _copy,
                       child: Text(
-                        'Скопировать',
+                        'Copy',
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -135,7 +147,7 @@ class __CommonErrorDialog extends State<_CommonErrorDialog> {
                     OutlinedButton(
                       onPressed: _send,
                       child: Text(
-                        'Отправить',
+                        'Send',
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -160,7 +172,7 @@ class __CommonErrorDialog extends State<_CommonErrorDialog> {
     await Clipboard.setData(ClipboardData(text: _text));
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('Скопировано в буфер обмена', textAlign: TextAlign.center)));
+      ..showSnackBar(SnackBar(content: Text('Copied to clipboard', textAlign: TextAlign.center)));
   }
 
   void _send() async {

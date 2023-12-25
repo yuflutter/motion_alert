@@ -28,7 +28,12 @@ class SimpleFutureBuilder<T> extends StatelessWidget {
                     dev.log('', error: snapshot.error, stackTrace: snapshot.stackTrace);
                     return (errorBuilder != null)
                         ? errorBuilder!(snapshot.error.toString())
-                        : ErrorScreen(userMsg: '', error: snapshot.error!, stack: snapshot.stackTrace);
+                        : ErrorScreen(
+                            userMsg: 'ERROR',
+                            error: snapshot.error!,
+                            stack: snapshot.stackTrace,
+                            isExpanded: true,
+                          );
                   }()
                 : builder(context, (snapshot.hasData) ? snapshot.requireData : null);
       },

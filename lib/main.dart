@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:motion_alert/app_commander.dart';
+import 'package:motion_alert/app_settings.dart';
 import 'package:motion_alert/motion_camera.dart';
 import 'package:motion_alert/UI/home_page.dart';
 import 'package:motion_alert/motion_notifier.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,4 +33,13 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> appStart() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AppSettings.instance.init();
+  await MotionNotifier.instance.init();
+  await MotionCamera.instance.init();
+  await AppCommander.instance.init();
+  await WakelockPlus.toggle(enable: true);
 }

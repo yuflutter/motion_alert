@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:enough_mail/enough_mail.dart';
 
@@ -6,7 +7,7 @@ import 'package:motion_alert/motion_camera.dart';
 import 'package:motion_alert/motion_notifier.dart';
 
 class AppCommander {
-  late final MailClient _mailClient;
+  late MailClient _mailClient;
 
   static final instance = AppCommander._();
   AppCommander._();
@@ -41,6 +42,11 @@ class AppCommander {
       }
     });
     await _mailClient.startPolling(Duration(seconds: 20));
+    Timer.periodic(Duration(minutes: 1), (_) {
+      if (!_mailClient.isPolling()) {
+        init();
+      }
+    });
 
     // if ((await Telephony.instance.requestSmsPermissions) == true) {
     //   Telephony.instance.listenIncomingSms(

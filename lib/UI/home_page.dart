@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:provider/provider.dart';
 
-import 'package:motion_alert/app_start.dart';
+import 'package:motion_alert/main.dart';
 import 'package:motion_alert/motion_camera.dart';
 import 'package:motion_alert/motion_notifier.dart';
 import 'package:motion_alert/app_settings.dart';
@@ -44,30 +44,32 @@ class _HomePage extends State<HomePage> {
                           alignment: AlignmentDirectional.bottomCenter,
                           children: [
                             CameraPreview(MotionCamera.instance.cameraController),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 19),
-                              child: (MotionCamera.instance.motionDetected)
-                                  ? Text('MOTION DETECTED', style: _imageTextStyleAlert)
-                                  : (MotionCamera.instance.motionDetection)
-                                      ? Text('DETECTING...', style: _imageTextStyle)
-                                      : Text('PAUSED', style: _imageTextStyle),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(10, 0, 10, 3),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      notifier.lastLog,
-                                      style: _imageTextStyle,
-                                    ),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                (!MotionCamera.instance.motionDetection)
+                                    ? Text('PAUSED', style: _imageTextStyle)
+                                    : (MotionCamera.instance.motionDetected)
+                                        ? Text('MOTION DETECTED', style: _imageTextStyleAlert)
+                                        : Text('DETECTING...', style: _imageTextStyle),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          notifier.lastLog,
+                                          style: _imageTextStyle,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${notifier.framesCount} / ${notifier.attachmentsCount}',
+                                        style: _imageTextStyle,
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    '${notifier.framesCount} / ${notifier.attachmentsCount}',
-                                    style: _imageTextStyle,
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
