@@ -26,21 +26,25 @@ class AppCommander {
     );
     await _mailClient.connect();
     await _mailClient.selectInbox();
-    _mailClient.eventBus.on<MailLoadEvent>().listen((ev) {
-      if (ev.message.from?[0].personalName != AppSettings.instance.senderName) {
-        log('new message at ${ev.message.from}');
-        MotionNotifier.instance.sendCurrentFrame();
-        if (ev.message.envelope?.subject?.contains(' ${AppSettings.instance.camName} ') == true) {
-          final command = ev.message.envelope!.subject!.trim().split(':').first.toLowerCase();
-          log('command: $command');
-          final _ = switch (command) {
-            'start' => MotionCamera.instance.startDetectMotion(),
-            'stop' => MotionCamera.instance.stopDetectMotion(),
-            _ => null,
-          };
+    _mailClient.eventBus.on<MailLoadEvent>().listen(
+      (ev) {
+        if (ev.message.from?[0].personalName != AppSettings.instance.senderName) {
+          log('new message at ${ev.message.from} ${ev.message.envelope?.subject}');
+          if (ev.message.envelope?.subject?.contains(AppSettings.instance.camName) == true) {
+            final command = ev.message.envelope!.subject!.trim().split(':').first.toLowerCase();
+            log('command: $command');
+            final _ = switch (command) {
+              'start' => MotionCamera.instance.startDetectMotion(),
+              'stop' => MotionCamera.instance.stopDetectMotion(),
+              _ => null,
+            };
+            MotionNotifier.instance.sendCurrentFrame(', command: $command');
+          } else {
+            _mailClient.markUnseen(MessageSequence.fromMessage(ev.message));
+          }
         }
-      }
-    });
+      },
+    );
     await _mailClient.startPolling(Duration(seconds: 20));
     Timer.periodic(Duration(minutes: 1), (_) {
       if (!_mailClient.isPolling()) {

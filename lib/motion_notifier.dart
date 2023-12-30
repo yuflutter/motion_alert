@@ -47,10 +47,10 @@ class MotionNotifier with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> sendCurrentFrame() async {
+  Future<void> sendCurrentFrame(String msg) async {
     if (_currentFrame != null) {
       _sendEmail(
-        '${AppSettings.instance.camName} on demand',
+        '${AppSettings.instance.camName} on demand$msg',
         [await ImageConverter.frameToAttachment(_currentFrame!)],
       );
       _log('current frame sent on demand');

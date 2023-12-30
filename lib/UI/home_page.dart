@@ -37,42 +37,40 @@ class _HomePage extends State<HomePage> {
             context.watch<MotionCamera>();
             final notifier = context.watch<MotionNotifier>();
             return (_isScreenVisible)
-                ? Column(
+                ? ListView(
                     children: [
-                      Expanded(
-                        child: Stack(
-                          alignment: AlignmentDirectional.bottomCenter,
-                          children: [
-                            CameraPreview(MotionCamera.instance.cameraController),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                (!MotionCamera.instance.motionDetection)
-                                    ? Text('PAUSED', style: _imageTextStyle)
-                                    : (MotionCamera.instance.motionDetected)
-                                        ? Text('MOTION DETECTED', style: _imageTextStyleAlert)
-                                        : Text('DETECTING...', style: _imageTextStyle),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          notifier.lastLog,
-                                          style: _imageTextStyle,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${notifier.framesCount} / ${notifier.attachmentsCount}',
+                      Stack(
+                        alignment: AlignmentDirectional.bottomCenter,
+                        children: [
+                          CameraPreview(MotionCamera.instance.cameraController),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              (!MotionCamera.instance.motionDetection)
+                                  ? Text('PAUSED', style: _imageTextStyle)
+                                  : (MotionCamera.instance.motionDetected)
+                                      ? Text('MOTION DETECTED', style: _imageTextStyleAlert)
+                                      : Text('DETECTING...', style: _imageTextStyle),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(10, 0, 10, 5),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        notifier.lastLog,
                                         style: _imageTextStyle,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    Text(
+                                      '${notifier.framesCount} / ${notifier.attachmentsCount}',
+                                      style: _imageTextStyle,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
